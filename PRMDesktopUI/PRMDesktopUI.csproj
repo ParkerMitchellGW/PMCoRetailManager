@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>PMCoRetailManager</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+
+	<Target Name="WorkaroundRemoveAnalayzers" BeforeTargets="GenerateTemporaryTargetAssembly">
+		<ItemGroup>
+			<_TempWorkaroundAnalyzer Include="@(Analyzer)" />
+			<Analyzer Remove="@(Analyzer)" />
+		</ItemGroup>
+	</Target>
+
+	<Target Name="WorkaroundAddAnalayzers" AfterTargets="GenerateTemporaryTargetAssembly">
+		<ItemGroup>
+			<Analyzer Include="@(_TempWorkaroundAnalyzer)" />
+		</ItemGroup>
+	</Target>
+
+</Project>
