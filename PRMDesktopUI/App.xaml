@@ -4,6 +4,8 @@
              xmlns:local="clr-namespace:PRMDesktopUI">
     <!--StartupUri="MainWindow.xaml">-->
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

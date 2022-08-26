@@ -20,19 +20,27 @@ namespace PRMDesktopUI.ViewModels
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(SubmitCommand))]
-        private SecureString _securePassword;
+        private SecureString _securePassword = new();
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsErrorVisible))]
+        private string _errorMessage = "";
+
+        public bool IsErrorVisible => !string.IsNullOrEmpty(ErrorMessage);
         
         private readonly IAPIHelper _apiHelper;
 
         [RelayCommand(CanExecute = nameof(CanSubmit))]
         private async Task Submit()
         {
+            ErrorMessage = "";
             try
             {
                 var result = await _apiHelper.Authenticate(Username, SecurePassword);
             }
-            catch(Exception ex)
-            {
+            catch(Exception ex) 
+            { 
+                ErrorMessage = ex.Message;
                 Trace.WriteLine(ex.Message);
             }
         }
