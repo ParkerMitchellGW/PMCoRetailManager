@@ -15,6 +15,15 @@
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PRMDesktopUI.Library\PRMDesktopUI.Library.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Helpers\" />
+    <Folder Include="Models\" />
+  </ItemGroup>
+
 	<Target Name="WorkaroundRemoveAnalayzers" BeforeTargets="GenerateTemporaryTargetAssembly">
 		<ItemGroup>
 			<_TempWorkaroundAnalyzer Include="@(Analyzer)" />

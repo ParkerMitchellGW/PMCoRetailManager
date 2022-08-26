@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using PRMDesktopUI.Helpers;
+using PRMDesktopUI.Library.Api;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -37,6 +37,9 @@ namespace PRMDesktopUI.ViewModels
             try
             {
                 var result = await _apiHelper.Authenticate(Username, SecurePassword);
+
+                //Capture more information about the user
+                await _apiHelper.GetLoggedInUserInfo(result.Access_Token);
             }
             catch(Exception ex) 
             { 
