@@ -18,6 +18,7 @@ namespace PRMDesktopUI.ViewModels
         [ObservableProperty]
         string _title = "WE HERE MAYNE";
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public ShellViewModel(LoginViewModel loginViewModel)
         {
             SelectedViewModel = _loginViewModel = loginViewModel;
