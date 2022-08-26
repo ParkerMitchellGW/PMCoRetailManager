@@ -5,10 +5,28 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PRMDesktopUI.Views" 
         xmlns:viewmodels="clr-namespace:PRMDesktopUI.ViewModels" 
+        xmlns:views="clr-namespace:PRMDesktopUI.Views" 
         d:DataContext="{d:DesignInstance Type=viewmodels:ShellViewModel}"
         mc:Ignorable="d"
         Title="{Binding Title}" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+    <Window.Resources>
+        <ResourceDictionary>
+            <DataTemplate DataType="{x:Type viewmodels:LoginViewModel}">
+                <views:LoginView/>
+            </DataTemplate>
+        </ResourceDictionary>
+    </Window.Resources>
+    <DockPanel>
+        <Menu FontSize="18" DockPanel.Dock="Top">
+            <MenuItem Header="_File">
+                
+            </MenuItem>
+            <MenuItem Header="_Account">
+                <MenuItem x:Name="LoginScreen" Header="_Login"/>
+            </MenuItem>
+        </Menu>
+        <Grid>
+            <ContentControl Margin="5" x:Name="ActiveItem" Content="{Binding SelectedViewModel}"/> 
+        </Grid>
+    </DockPanel>
 </Window>

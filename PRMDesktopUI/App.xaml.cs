@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using PRMDesktopUI.Views;
 using PRMDesktopUI.ViewModels;
+using PRMDesktopUI.Helpers;
 
 namespace PRMDesktopUI
 {
@@ -22,6 +23,7 @@ namespace PRMDesktopUI
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddSingleton<ShellView>();
+                    services.AddSingleton<IAPIHelper, APIHelper>();
 
                     RegisterAllViewModels(services);
                 })
