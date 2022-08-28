@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using PRMDesktopUI.Library.Api;
 using PRMDesktopUI.Library.Models;
 using System;
 using System.Collections.Generic;
@@ -11,10 +12,10 @@ using System.Threading.Tasks;
 namespace PRMDesktopUI.ViewModels
 {
     [ObservableObject]
-    public partial class SalesViewModel
+    public partial class SalesViewModel : IReceiveViewEvents
     {
         [ObservableProperty]
-        private BindingList<string> _products = new();
+        private BindingList<ProductModel> _products = new();
 
         [ObservableProperty]
         private BindingList<string> _cart = new();
@@ -22,6 +23,7 @@ namespace PRMDesktopUI.ViewModels
         [ObservableProperty]
         private int _itemQuantity;
         private readonly ILoggedInUserModel _loggedInUser;
+        private readonly IProductEndpoint _productEndpoint;
 
         public string SubTotal => "$0.00";
         public string Tax => "$0.00";
@@ -55,13 +57,25 @@ namespace PRMDesktopUI.ViewModels
         }
 
         [RelayCommand(CanExecute = nameof(CanCheckOut))]
-        private void CheckOut() 
-        { 
+        private void CheckOut()
+        {
         }
 
-        public SalesViewModel(ILoggedInUserModel loggedInUser)
+        public SalesViewModel(ILoggedInUserModel loggedInUser, IProductEndpoint productEndpoint)
         {
             _loggedInUser = loggedInUser;
+            _productEndpoint = productEndpoint;
+        }
+
+        private async Task LoadProducts()
+        {
+            var productList = await _productEndpoint.GetAll();
+            Products = new BindingList<ProductModel>(productList);
+        }
+
+        public async void OnViewLoaded(object view)
+        {
+            await LoadProducts();
         }
     }
 }

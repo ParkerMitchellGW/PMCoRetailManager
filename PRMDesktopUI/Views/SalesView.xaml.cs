@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PRMDesktopUI.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,15 @@ namespace PRMDesktopUI.Views
         public SalesView()
         {
             InitializeComponent();
+            Loaded += SalesView_Loaded;
+        }
+
+        private void SalesView_Loaded(object sender, RoutedEventArgs e)
+        {
+            if(DataContext is not null && DataContext is IReceiveViewEvents vm)
+            {
+                vm.OnViewLoaded(this);
+            }
         }
     }
 }

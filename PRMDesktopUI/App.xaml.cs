@@ -27,6 +27,7 @@ namespace PRMDesktopUI
                     services.AddSingleton<IAPIHelper, APIHelper>();
                     services.AddSingleton<ILoggedInUserModel, LoggedInUserModel>();
 
+                    services.AddTransient<IProductEndpoint, ProductEndpoint>();
                     RegisterAllViewModels(services);
                 })
                 .Build();

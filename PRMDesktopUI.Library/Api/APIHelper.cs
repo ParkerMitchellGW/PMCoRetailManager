@@ -22,6 +22,8 @@ namespace PRMDesktopUI.Library.Api
             _loggedInUser = loggedInUser;
         }
 
+        public HttpClient ApiClient => _apiClient;
+
         private void InitializeClient()
         {
             string api = ConfigurationManager.AppSettings["api"]!;

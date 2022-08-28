@@ -41,7 +41,15 @@
         <ListBox x:Name="Products"
                  Grid.Row="2"
                  Grid.Column="0"
-                 MinHeight="200" MinWidth="150"/>
+                 ItemsSource="{Binding Products}"
+                 MinHeight="200" MinWidth="150" DisplayMemberPath="ProductName">
+            <!--<ListBox.Resources>
+                <DataTemplate>
+                    <TextBlock Text="{Binding ProductName}"/>
+                </DataTemplate>
+            </ListBox.Resources>-->
+
+        </ListBox>
         <!-- Column 1 -->
         <StackPanel Margin="20 0"
                     Orientation="Vertical"
