@@ -18,27 +18,58 @@ namespace PRMDesktopUI.ViewModels
         private BindingList<ProductModel> _products = new();
 
         [ObservableProperty]
-        private BindingList<string> _cart = new();
+        [NotifyCanExecuteChangedFor(nameof(AddToCartCommand))]
+        private ProductModel? _selectedProduct;
 
         [ObservableProperty]
-        private int _itemQuantity;
+        private BindingList<CartItemModel> _cart = new();
+
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(AddToCartCommand))]
+        private int _itemQuantity = 1;
+
         private readonly ILoggedInUserModel _loggedInUser;
+
         private readonly IProductEndpoint _productEndpoint;
 
-        public string SubTotal => "$0.00";
+        public string SubTotal
+        {
+            get
+            {
+                decimal subTotal = Cart.Sum(item => item.QuantityInCart * item.Product.RetailPrice);
+                return subTotal.ToString("C");
+            }
+        }
         public string Tax => "$0.00";
         public string Total => "$0.00";
 
-        private bool CanAddToCart
-        {
-            // Verify we can add to cart
-            get => false;
-        }
+        private bool CanAddToCart =>
+            ItemQuantity >= 0 &&
+            SelectedProduct?.QuantityInStock >= ItemQuantity;
 
         [RelayCommand(CanExecute = nameof(CanAddToCart))]
         private void AddToCart()
         {
+            // Check to see if this item exists already
+            CartItemModel? item = Cart.FirstOrDefault(item => item.Product == SelectedProduct);
+            if(item is not null)
+            {
+                item.QuantityInCart += ItemQuantity;
+            }
+            else
+            {
+                item = new()
+                {
+                    Product = SelectedProduct,
+                    QuantityInCart = ItemQuantity
+                };
+                Cart.Add(item);
+            }
 
+            SelectedProduct!.QuantityInStock -= ItemQuantity;
+            ItemQuantity = 1;
+            OnPropertyChanged(nameof(SubTotal));
+            AddToCartCommand.NotifyCanExecuteChanged();
         }
 
         private bool CanRemoveFromCart

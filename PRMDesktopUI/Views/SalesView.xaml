@@ -42,14 +42,8 @@
                  Grid.Row="2"
                  Grid.Column="0"
                  ItemsSource="{Binding Products}"
-                 MinHeight="200" MinWidth="150" DisplayMemberPath="ProductName">
-            <!--<ListBox.Resources>
-                <DataTemplate>
-                    <TextBlock Text="{Binding ProductName}"/>
-                </DataTemplate>
-            </ListBox.Resources>-->
-
-        </ListBox>
+                 SelectedItem="{Binding SelectedProduct}"
+                 MinHeight="200" MinWidth="150" DisplayMemberPath="ProductName"/>
         <!-- Column 1 -->
         <StackPanel Margin="20 0"
                     Orientation="Vertical"
@@ -57,7 +51,7 @@
                     Grid.Row="2">
             <TextBlock Text="Quantity" HorizontalAlignment="Center"/>
             <TextBox x:Name="Quantity" 
-                     Text="{Binding ItemQuantity}"
+                     Text="{Binding ItemQuantity, UpdateSourceTrigger=PropertyChanged}"
                      MinWidth="100"
                      Margin="0 0 0 10"/>
             <Button x:Name="AddToCart"
@@ -76,7 +70,10 @@
         <ListBox x:Name="Cart"
                  Grid.Row="2"
                  Grid.Column="2"
-                 MinHeight="200" MinWidth="150"/>
+                 MinHeight="200" MinWidth="150"
+                 ItemsSource="{Binding Cart}"
+                 DisplayMemberPath="DisplayText"
+                 />
         <DockPanel Grid.Row="3"
                     Grid.Column="2">
             <TextBlock Text="SubTotal:" Margin="0 0 15 0"/>
