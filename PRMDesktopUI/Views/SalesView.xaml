@@ -91,8 +91,26 @@
                  Grid.Column="2"
                  MinHeight="200" MinWidth="150"
                  ItemsSource="{Binding Cart}"
-                 DisplayMemberPath="DisplayText"
-                 />
+                 >
+            <!--DisplayMemberPath="DisplayText"-->
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="{Binding Product.ProductName}"/>
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Price: " FontSize="14"/>
+                                <TextBlock Text="{Binding Product.RetailPrice, StringFormat='{}{0:C}'}" FontSize="14"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="5 0 0 0">
+                                <TextBlock Text="Qty: " FontSize="14"/>
+                                <TextBlock Text="{Binding QuantityInCart}" FontSize="14"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
         <DockPanel Grid.Row="3"
                     Grid.Column="2">
             <TextBlock Text="SubTotal:" Margin="0 0 15 0"/>
