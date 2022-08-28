@@ -11,6 +11,7 @@ using PRMDesktopUI.Views;
 using PRMDesktopUI.ViewModels;
 using PRMDesktopUI.Library.Api;
 using PRMDesktopUI.Library.Models;
+using PRMDesktopUI.Library.Helpers;
 
 namespace PRMDesktopUI
 {
@@ -26,6 +27,7 @@ namespace PRMDesktopUI
                     services.AddSingleton<ShellView>();
                     services.AddSingleton<IAPIHelper, APIHelper>();
                     services.AddSingleton<ILoggedInUserModel, LoggedInUserModel>();
+                    services.AddSingleton<IConfigHelper, ConfigHelper>();
 
                     services.AddTransient<IProductEndpoint, ProductEndpoint>();
                     RegisterAllViewModels(services);

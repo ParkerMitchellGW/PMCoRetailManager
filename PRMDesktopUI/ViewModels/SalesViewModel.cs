@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PRMDesktopUI.Library.Api;
+using PRMDesktopUI.Library.Helpers;
 using PRMDesktopUI.Library.Models;
 using System;
 using System.Collections.Generic;
@@ -31,17 +32,20 @@ namespace PRMDesktopUI.ViewModels
         private readonly ILoggedInUserModel _loggedInUser;
 
         private readonly IProductEndpoint _productEndpoint;
+        private readonly IConfigHelper _config;
 
-        public string SubTotal
+        public string SubTotal => CalculateSubTotal().ToString("C");
+
+        private decimal CalculateSubTotal() => Cart.Sum(item => item.QuantityInCart * item.Product.RetailPrice);
+        public string Tax => CalculateTax().ToString("C");
+        private decimal CalculateTax()
         {
-            get
-            {
-                decimal subTotal = Cart.Sum(item => item.QuantityInCart * item.Product.RetailPrice);
-                return subTotal.ToString("C");
-            }
+            decimal taxRate = _config.GetTaxRate() / 100;
+            return Cart.
+                Where(item => item.Product.IsTaxable).
+                Sum(item => item.QuantityInCart * item.Product.RetailPrice * taxRate);
         }
-        public string Tax => "$0.00";
-        public string Total => "$0.00";
+        public string Total => (CalculateSubTotal() + CalculateTax()).ToString("C");
 
         private bool CanAddToCart =>
             ItemQuantity >= 0 &&
@@ -52,7 +56,7 @@ namespace PRMDesktopUI.ViewModels
         {
             // Check to see if this item exists already
             CartItemModel? item = Cart.FirstOrDefault(item => item.Product == SelectedProduct);
-            if(item is not null)
+            if (item is not null)
             {
                 item.QuantityInCart += ItemQuantity;
             }
@@ -68,7 +72,14 @@ namespace PRMDesktopUI.ViewModels
 
             SelectedProduct!.QuantityInStock -= ItemQuantity;
             ItemQuantity = 1;
+            OnCartChanged();
+        }
+
+        private void OnCartChanged()
+        {
             OnPropertyChanged(nameof(SubTotal));
+            OnPropertyChanged(nameof(Tax));
+            OnPropertyChanged(nameof(Total));
             AddToCartCommand.NotifyCanExecuteChanged();
         }
 
@@ -80,7 +91,7 @@ namespace PRMDesktopUI.ViewModels
         [RelayCommand(CanExecute = nameof(CanRemoveFromCart))]
         private void RemoveFromCart()
         {
-
+            OnCartChanged();
         }
         private bool CanCheckOut
         {
@@ -92,10 +103,11 @@ namespace PRMDesktopUI.ViewModels
         {
         }
 
-        public SalesViewModel(ILoggedInUserModel loggedInUser, IProductEndpoint productEndpoint)
+        public SalesViewModel(ILoggedInUserModel loggedInUser, IProductEndpoint productEndpoint, IConfigHelper config)
         {
             _loggedInUser = loggedInUser;
             _productEndpoint = productEndpoint;
+            _config = config;
         }
 
         private async Task LoadProducts()
