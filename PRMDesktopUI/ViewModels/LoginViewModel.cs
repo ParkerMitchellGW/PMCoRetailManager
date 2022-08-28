@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using PRMDesktopUI.Messages;
 using PRMDesktopUI.Library.Api;
 using System;
 using System.Collections.Generic;
@@ -12,6 +14,7 @@ using System.Threading.Tasks;
 namespace PRMDesktopUI.ViewModels
 {
     [ObservableObject]
+    [ObservableRecipient]
     public partial class LoginViewModel
     {
         [ObservableProperty]
@@ -40,6 +43,7 @@ namespace PRMDesktopUI.ViewModels
 
                 //Capture more information about the user
                 await _apiHelper.GetLoggedInUserInfo(result.Access_Token);
+                Messenger.Send(new LogOnMessage());
             }
             catch(Exception ex) 
             { 
@@ -51,6 +55,7 @@ namespace PRMDesktopUI.ViewModels
         public LoginViewModel(IAPIHelper apiHelper)
         {
             _apiHelper = apiHelper;
+            Messenger = WeakReferenceMessenger.Default;
         }
 
         private bool CanSubmit => Username.Length > 0 && SecurePassword?.Length > 0;

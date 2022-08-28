@@ -50,5 +50,10 @@ namespace PRMDesktopUI
 
             base.OnStartup(e);
         }
+
+        public static T GetRequiredService<T>() where T : notnull
+        {
+            return AppHost!.Services.GetRequiredService<T>();
+        }
     }
 }

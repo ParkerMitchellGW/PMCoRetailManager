@@ -8,11 +8,14 @@
         xmlns:views="clr-namespace:PRMDesktopUI.Views" 
         d:DataContext="{d:DesignInstance Type=viewmodels:ShellViewModel}"
         mc:Ignorable="d"
-        Title="{Binding Title}" Height="450" Width="800">
+        Title="{Binding Title}" Height="600" Width="1000">
     <Window.Resources>
         <ResourceDictionary>
             <DataTemplate DataType="{x:Type viewmodels:LoginViewModel}">
                 <views:LoginView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type viewmodels:SalesViewModel}">
+                <views:SalesView/>
             </DataTemplate>
         </ResourceDictionary>
     </Window.Resources>
@@ -26,7 +29,7 @@
             </MenuItem>
         </Menu>
         <Grid>
-            <ContentControl Margin="5" x:Name="ActiveItem" Content="{Binding SelectedViewModel}"/> 
+            <ContentControl Margin="20 5 20 20" x:Name="ActiveItem" Content="{Binding SelectedViewModel}"/> 
         </Grid>
     </DockPanel>
 </Window>

@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using PRMDesktopUI.Library.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,13 +14,14 @@ namespace PRMDesktopUI.ViewModels
     public partial class SalesViewModel
     {
         [ObservableProperty]
-        private BindingList<string> _products;
+        private BindingList<string> _products = new();
 
         [ObservableProperty]
-        private BindingList<string> _cart;
+        private BindingList<string> _cart = new();
 
         [ObservableProperty]
-        private string _itemQuantity;
+        private int _itemQuantity;
+        private readonly ILoggedInUserModel _loggedInUser;
 
         public string SubTotal => "$0.00";
         public string Tax => "$0.00";
@@ -55,6 +57,11 @@ namespace PRMDesktopUI.ViewModels
         [RelayCommand(CanExecute = nameof(CanCheckOut))]
         private void CheckOut() 
         { 
+        }
+
+        public SalesViewModel(ILoggedInUserModel loggedInUser)
+        {
+            _loggedInUser = loggedInUser;
         }
     }
 }
