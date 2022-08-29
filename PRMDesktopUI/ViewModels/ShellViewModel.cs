@@ -1,7 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using Microsoft.Extensions.DependencyInjection;
+using PRMDesktopUI.Library.Models;
 using PRMDesktopUI.Messages;
 using System;
 using System.Collections.Generic;
@@ -17,7 +19,7 @@ namespace PRMDesktopUI.ViewModels
     public partial class ShellViewModel : IRecipient<LogOnMessage>
     {
         private readonly SalesViewModel _salesViewModel;
-
+        private readonly ILoggedInUserModel _user;
         [ObservableProperty]
         private object _selectedViewModel;
 
@@ -25,9 +27,10 @@ namespace PRMDesktopUI.ViewModels
         string _title = "Get ready to sell, sell, sell!";
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        public ShellViewModel(SalesViewModel salesViewModel)
+        public ShellViewModel(SalesViewModel salesViewModel, ILoggedInUserModel loggedInUserModel)
         {
             _salesViewModel = salesViewModel;
+            _user = loggedInUserModel;
 
             // Ask for a new login viewmodel
             // We do not store the VM in any other location to prevent
@@ -44,6 +47,24 @@ namespace PRMDesktopUI.ViewModels
         public void Receive(LogOnMessage message)
         {
             SelectedViewModel = _salesViewModel;
+            LogOutCommand.NotifyCanExecuteChanged();
+            OnPropertyChanged(nameof(IsLoggedIn));
+        }
+
+        [RelayCommand]
+        private void ExitApplication()
+        {
+            Application.Current.Shutdown();
+        }
+
+        public bool IsLoggedIn => !string.IsNullOrEmpty(_user.Token);
+        [RelayCommand(CanExecute = nameof(IsLoggedIn))]
+        private void LogOut()
+        {
+            _user.LogOffUser();
+            SelectedViewModel = App.GetRequiredService<LoginViewModel>();
+            LogOutCommand.NotifyCanExecuteChanged();
+            OnPropertyChanged(nameof(IsLoggedIn));
         }
     }
 }

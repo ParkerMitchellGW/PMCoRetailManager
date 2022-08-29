@@ -42,7 +42,7 @@ namespace PRMDesktopUI.ViewModels
         private readonly ISaleEndpoint _saleEndpoint;
         private readonly IMapper _mapper;
 
-        public SalesViewModel(ILoggedInUserModel loggedInUser, IProductEndpoint productEndpoint, IConfigHelper config, 
+        public SalesViewModel(ILoggedInUserModel loggedInUser, IProductEndpoint productEndpoint, IConfigHelper config,
             ISaleEndpoint saleEndpoint, IMapper mapper)
         {
             _loggedInUser = loggedInUser;
@@ -50,6 +50,15 @@ namespace PRMDesktopUI.ViewModels
             _config = config;
             _saleEndpoint = saleEndpoint;
             _mapper = mapper;
+        }
+        private async Task ResetSalesViewModel()
+        {
+            ItemQuantity = 1;
+            SelectedCartItem = null;
+            SelectedProduct = null;
+            Cart = new();
+            await LoadProducts();
+            
         }
         public string SubTotal => CalculateSubTotal().ToString("C");
 
@@ -89,6 +98,11 @@ namespace PRMDesktopUI.ViewModels
 
             SelectedProduct!.QuantityInStock -= ItemQuantity;
             ItemQuantity = 1;
+            OnCartChanged();
+        }
+
+        partial void OnCartChanged(BindingList<CartItemDisplayModel> value)
+        {
             OnCartChanged();
         }
 
@@ -135,6 +149,7 @@ namespace PRMDesktopUI.ViewModels
             };
 
             await _saleEndpoint.PostSale(sale);
+            await ResetSalesViewModel();
         }
 
         private async Task LoadProducts()
