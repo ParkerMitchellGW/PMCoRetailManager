@@ -10,5 +10,6 @@ namespace PRMDesktopUI.Library.Api
         HttpClient ApiClient { get; }
         Task<AuthenticatedUser> Authenticate(string username, SecureString password);
         Task GetLoggedInUserInfo(string token);
+        public void LogOffUser();
     }
 }

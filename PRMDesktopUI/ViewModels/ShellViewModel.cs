@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using Microsoft.Extensions.DependencyInjection;
+using PRMDesktopUI.Library.Api;
 using PRMDesktopUI.Library.Models;
 using PRMDesktopUI.Messages;
 using System;
@@ -20,6 +21,7 @@ namespace PRMDesktopUI.ViewModels
     {
         private readonly SalesViewModel _salesViewModel;
         private readonly ILoggedInUserModel _user;
+        private readonly APIHelper _apiHelper;
         [ObservableProperty]
         private object _selectedViewModel;
 
@@ -27,10 +29,11 @@ namespace PRMDesktopUI.ViewModels
         string _title = "Get ready to sell, sell, sell!";
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        public ShellViewModel(SalesViewModel salesViewModel, ILoggedInUserModel loggedInUserModel)
+        public ShellViewModel(SalesViewModel salesViewModel, ILoggedInUserModel loggedInUserModel, APIHelper apiHelper)
         {
             _salesViewModel = salesViewModel;
             _user = loggedInUserModel;
+            _apiHelper = apiHelper;
 
             // Ask for a new login viewmodel
             // We do not store the VM in any other location to prevent
@@ -61,7 +64,8 @@ namespace PRMDesktopUI.ViewModels
         [RelayCommand(CanExecute = nameof(IsLoggedIn))]
         private void LogOut()
         {
-            _user.LogOffUser();
+            _user.ResetOffUser();
+            _apiHelper.LogOffUser();
             SelectedViewModel = App.GetRequiredService<LoginViewModel>();
             LogOutCommand.NotifyCanExecuteChanged();
             OnPropertyChanged(nameof(IsLoggedIn));
