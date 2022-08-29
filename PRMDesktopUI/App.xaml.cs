@@ -12,6 +12,8 @@ using PRMDesktopUI.ViewModels;
 using PRMDesktopUI.Library.Api;
 using PRMDesktopUI.Library.Models;
 using PRMDesktopUI.Library.Helpers;
+using AutoMapper;
+using PRMDesktopUI.Models;
 
 namespace PRMDesktopUI
 {
@@ -31,9 +33,22 @@ namespace PRMDesktopUI
 
                     services.AddTransient<IProductEndpoint, ProductEndpoint>();
                     services.AddTransient<ISaleEndpoint, SaleEndpoint>();
+
                     RegisterAllViewModels(services);
+                    ConfigureAutoMapper(services);
                 })
                 .Build();
+        }
+
+        private void ConfigureAutoMapper(IServiceCollection services)
+        {
+            var config = new MapperConfiguration(cfg => {
+                cfg.CreateMap<ProductModel, ProductDisplayModel>();
+                cfg.CreateMap<CartItemModel, CartItemDisplayModel>();
+            });
+            var mapper = config.CreateMapper();
+
+            services.AddSingleton(mapper);
         }
 
         private void RegisterAllViewModels(IServiceCollection services)

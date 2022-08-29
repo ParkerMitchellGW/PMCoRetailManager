@@ -8,21 +8,10 @@ using System.Threading.Tasks;
 
 namespace PRMDesktopUI.Library.Models
 {
-    public partial class CartItemModel : ObservableObject
+    public partial class CartItemModel
     {
         public ProductModel Product { get; set; }
 
-        private int _quantityInCart;
-        public int QuantityInCart
-        {
-            get => _quantityInCart;
-            set
-            {
-                SetProperty(ref _quantityInCart, value);
-                OnPropertyChanged(nameof(DisplayText));
-            }
-        }
-
-        public string DisplayText => $"{Product.ProductName} ({QuantityInCart})";
+        public int QuantityInCart { get; set; }
     }
 }

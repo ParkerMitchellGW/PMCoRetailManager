@@ -1,8 +1,10 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using AutoMapper;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PRMDesktopUI.Library.Api;
 using PRMDesktopUI.Library.Helpers;
 using PRMDesktopUI.Library.Models;
+using PRMDesktopUI.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,18 +18,18 @@ namespace PRMDesktopUI.ViewModels
     public partial class SalesViewModel : IReceiveViewEvents
     {
         [ObservableProperty]
-        private BindingList<ProductModel> _products = new();
+        private BindingList<ProductDisplayModel> _products = new();
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(AddToCartCommand))]
-        private ProductModel? _selectedProduct;
+        private ProductDisplayModel? _selectedProduct;
 
         [ObservableProperty]
-        private BindingList<CartItemModel> _cart = new();
+        private BindingList<CartItemDisplayModel> _cart = new();
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(RemoveFromCartCommand))]
-        private CartItemModel? _selectedCartItem;
+        private CartItemDisplayModel? _selectedCartItem;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(AddToCartCommand))]
@@ -38,13 +40,16 @@ namespace PRMDesktopUI.ViewModels
         private readonly IProductEndpoint _productEndpoint;
         private readonly IConfigHelper _config;
         private readonly ISaleEndpoint _saleEndpoint;
+        private readonly IMapper _mapper;
 
-        public SalesViewModel(ILoggedInUserModel loggedInUser, IProductEndpoint productEndpoint, IConfigHelper config, ISaleEndpoint saleEndpoint)
+        public SalesViewModel(ILoggedInUserModel loggedInUser, IProductEndpoint productEndpoint, IConfigHelper config, 
+            ISaleEndpoint saleEndpoint, IMapper mapper)
         {
             _loggedInUser = loggedInUser;
             _productEndpoint = productEndpoint;
             _config = config;
             _saleEndpoint = saleEndpoint;
+            _mapper = mapper;
         }
         public string SubTotal => CalculateSubTotal().ToString("C");
 
@@ -67,7 +72,7 @@ namespace PRMDesktopUI.ViewModels
         private void AddToCart()
         {
             // Check to see if this item exists already
-            CartItemModel? item = Cart.FirstOrDefault(item => item.Product == SelectedProduct);
+            CartItemDisplayModel? item = Cart.FirstOrDefault(item => item.Product == SelectedProduct);
             if (item is not null)
             {
                 item.QuantityInCart += ItemQuantity;
@@ -76,7 +81,7 @@ namespace PRMDesktopUI.ViewModels
             {
                 item = new()
                 {
-                    Product = SelectedProduct,
+                    Product = SelectedProduct!,
                     QuantityInCart = ItemQuantity
                 };
                 Cart.Add(item);
@@ -101,8 +106,8 @@ namespace PRMDesktopUI.ViewModels
         [RelayCommand(CanExecute = nameof(CanRemoveFromCart))]
         private void RemoveFromCart()
         {
-            CartItemModel cartItem = SelectedCartItem!;
-            ProductModel? product = Products.FirstOrDefault(item => item == cartItem.Product);
+            CartItemDisplayModel cartItem = SelectedCartItem!;
+            ProductDisplayModel? product = Products.FirstOrDefault(item => item == cartItem.Product);
             if (product is not null)
             {
                 product.QuantityInStock += cartItem.QuantityInCart;
@@ -135,7 +140,8 @@ namespace PRMDesktopUI.ViewModels
         private async Task LoadProducts()
         {
             var productList = await _productEndpoint.GetAll();
-            Products = new BindingList<ProductModel>(productList);
+            var products = _mapper.Map<List<ProductDisplayModel>>(productList);
+            Products = new BindingList<ProductDisplayModel>(products);
         }
 
         public async void OnViewLoaded(object view)
