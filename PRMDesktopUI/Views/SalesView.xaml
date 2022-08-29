@@ -91,6 +91,7 @@
                  Grid.Column="2"
                  MinHeight="200" MinWidth="150"
                  ItemsSource="{Binding Cart}"
+                 SelectedItem="{Binding SelectedCartItem}"
                  >
             <!--DisplayMemberPath="DisplayText"-->
             <ListBox.ItemTemplate>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,13 @@ namespace PRMDesktopUI.Views
         public LoginView()
         {
             InitializeComponent();
+            InitCredentials();
+        }
+
+        [Conditional("DEBUG")]
+        private void InitCredentials()
+        {
+            password.Password = "Pwd123!";
         }
 
         private void password_PasswordChanged(object sender, RoutedEventArgs e)

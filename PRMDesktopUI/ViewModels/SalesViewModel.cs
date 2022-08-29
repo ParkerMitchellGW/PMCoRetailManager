@@ -26,6 +26,10 @@ namespace PRMDesktopUI.ViewModels
         private BindingList<CartItemModel> _cart = new();
 
         [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(RemoveFromCartCommand))]
+        private CartItemModel? _selectedCartItem;
+
+        [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(AddToCartCommand))]
         private int _itemQuantity = 1;
 
@@ -33,7 +37,15 @@ namespace PRMDesktopUI.ViewModels
 
         private readonly IProductEndpoint _productEndpoint;
         private readonly IConfigHelper _config;
+        private readonly ISaleEndpoint _saleEndpoint;
 
+        public SalesViewModel(ILoggedInUserModel loggedInUser, IProductEndpoint productEndpoint, IConfigHelper config, ISaleEndpoint saleEndpoint)
+        {
+            _loggedInUser = loggedInUser;
+            _productEndpoint = productEndpoint;
+            _config = config;
+            _saleEndpoint = saleEndpoint;
+        }
         public string SubTotal => CalculateSubTotal().ToString("C");
 
         private decimal CalculateSubTotal() => Cart.Sum(item => item.QuantityInCart * item.Product.RetailPrice);
@@ -81,33 +93,43 @@ namespace PRMDesktopUI.ViewModels
             OnPropertyChanged(nameof(Tax));
             OnPropertyChanged(nameof(Total));
             AddToCartCommand.NotifyCanExecuteChanged();
+            RemoveFromCartCommand.NotifyCanExecuteChanged();
+            CheckOutCommand.NotifyCanExecuteChanged();
         }
 
-        private bool CanRemoveFromCart
-        {
-            // Verify we can remove from cart
-            get => false;
-        }
+        private bool CanRemoveFromCart => SelectedCartItem != null;
         [RelayCommand(CanExecute = nameof(CanRemoveFromCart))]
         private void RemoveFromCart()
         {
+            CartItemModel cartItem = SelectedCartItem!;
+            ProductModel? product = Products.FirstOrDefault(item => item == cartItem.Product);
+            if (product is not null)
+            {
+                product.QuantityInStock += cartItem.QuantityInCart;
+            }
+
+            Cart.Remove(cartItem);
+            SelectedCartItem = null;
             OnCartChanged();
         }
-        private bool CanCheckOut
-        {
-            get => false;
-        }
+        private bool CanCheckOut => Cart?.Count > 0;
 
         [RelayCommand(CanExecute = nameof(CanCheckOut))]
-        private void CheckOut()
+        private async Task CheckOut()
         {
-        }
+            SaleModel sale = new()
+            {
+                SaleDetails = Cart
+                .Select(cartItem =>
+                    new SaleDetailModel()
+                    {
+                        ProductId = cartItem.Product.Id,
+                        Quantity = cartItem.QuantityInCart
+                    })
+                .ToList()
+            };
 
-        public SalesViewModel(ILoggedInUserModel loggedInUser, IProductEndpoint productEndpoint, IConfigHelper config)
-        {
-            _loggedInUser = loggedInUser;
-            _productEndpoint = productEndpoint;
-            _config = config;
+            await _saleEndpoint.PostSale(sale);
         }
 
         private async Task LoadProducts()

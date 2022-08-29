@@ -10,6 +10,7 @@ using System.Linq;
 using System.Security;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net;
 
 namespace PRMDesktopUI.ViewModels
 {
@@ -56,6 +57,14 @@ namespace PRMDesktopUI.ViewModels
         {
             _apiHelper = apiHelper;
             Messenger = WeakReferenceMessenger.Default;
+            InitCredentials();
+        }
+
+        [Conditional("DEBUG")]
+        private void InitCredentials()
+        {
+            Username = "Parker@PMCo.com";
+            SecurePassword = new NetworkCredential("", "Pwd123!").SecurePassword;
         }
 
         private bool CanSubmit => Username.Length > 0 && SecurePassword?.Length > 0;

@@ -30,6 +30,7 @@ namespace PRMDesktopUI
                     services.AddSingleton<IConfigHelper, ConfigHelper>();
 
                     services.AddTransient<IProductEndpoint, ProductEndpoint>();
+                    services.AddTransient<ISaleEndpoint, SaleEndpoint>();
                     RegisterAllViewModels(services);
                 })
                 .Build();
