@@ -14,6 +14,7 @@ using PRMDesktopUI.Library.Models;
 using PRMDesktopUI.Library.Helpers;
 using AutoMapper;
 using PRMDesktopUI.Models;
+using PRMDesktopUI.Services;
 
 namespace PRMDesktopUI
 {
@@ -30,6 +31,7 @@ namespace PRMDesktopUI
                     services.AddSingleton<IAPIHelper, APIHelper>();
                     services.AddSingleton<ILoggedInUserModel, LoggedInUserModel>();
                     services.AddSingleton<IConfigHelper, ConfigHelper>();
+                    services.AddSingleton<IStatusInfoDisplay, StatusInfoDisplay>();
 
                     services.AddTransient<IProductEndpoint, ProductEndpoint>();
                     services.AddTransient<ISaleEndpoint, SaleEndpoint>();

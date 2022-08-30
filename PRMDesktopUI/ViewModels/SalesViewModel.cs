@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using PRMDesktopUI.Library.Api;
 using PRMDesktopUI.Library.Helpers;
 using PRMDesktopUI.Library.Models;
+using PRMDesktopUI.Messages;
 using PRMDesktopUI.Models;
+using PRMDesktopUI.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,6 +18,7 @@ using System.Threading.Tasks;
 namespace PRMDesktopUI.ViewModels
 {
     [ObservableObject]
+    [ObservableRecipient]
     public partial class SalesViewModel : IReceiveViewEvents
     {
         [ObservableProperty]
@@ -41,15 +45,18 @@ namespace PRMDesktopUI.ViewModels
         private readonly IConfigHelper _config;
         private readonly ISaleEndpoint _saleEndpoint;
         private readonly IMapper _mapper;
+        private readonly IStatusInfoDisplay _statusInfo;
 
         public SalesViewModel(ILoggedInUserModel loggedInUser, IProductEndpoint productEndpoint, IConfigHelper config,
-            ISaleEndpoint saleEndpoint, IMapper mapper)
+            ISaleEndpoint saleEndpoint, IMapper mapper, IStatusInfoDisplay statusInfo)
         {
             _loggedInUser = loggedInUser;
             _productEndpoint = productEndpoint;
             _config = config;
             _saleEndpoint = saleEndpoint;
             _mapper = mapper;
+            _statusInfo = statusInfo;
+            Messenger = WeakReferenceMessenger.Default;
         }
         private async Task ResetSalesViewModel()
         {
@@ -58,7 +65,7 @@ namespace PRMDesktopUI.ViewModels
             SelectedProduct = null;
             Cart = new();
             await LoadProducts();
-            
+
         }
         public string SubTotal => CalculateSubTotal().ToString("C");
 
@@ -161,7 +168,22 @@ namespace PRMDesktopUI.ViewModels
 
         public async void OnViewLoaded(object view)
         {
-            await LoadProducts();
+            try
+            {
+                await LoadProducts();
+            }
+            catch (Exception ex)
+            {
+                if(ex.Message == "Unauthorized")
+                {
+                    _statusInfo.ShowMessage("You do not have permission to access this.", "Unauthorized", "System Error");
+                }
+                else
+                {
+                    _statusInfo.ShowMessage(ex.Message, "Fatal Exception");
+                }
+                Messenger.Send<ClosePageMessage>();
+            }
         }
     }
 }

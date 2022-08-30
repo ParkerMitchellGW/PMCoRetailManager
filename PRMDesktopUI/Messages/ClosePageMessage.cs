@@ -1,8 +1,8 @@
 ﻿namespace PRMDesktopUI.Messages
 {
-    public class LogOnMessage
+    public class ClosePageMessage
     {
-        public LogOnMessage()
+        public ClosePageMessage()
         {
 
         }

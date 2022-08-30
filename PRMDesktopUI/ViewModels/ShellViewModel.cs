@@ -17,13 +17,13 @@ namespace PRMDesktopUI.ViewModels
 {
     [ObservableObject]
     [ObservableRecipient]
-    public partial class ShellViewModel : IRecipient<LogOnMessage>
+    public partial class ShellViewModel : IRecipient<LogOnMessage>, IRecipient<ClosePageMessage>
     {
         private readonly SalesViewModel _salesViewModel;
         private readonly ILoggedInUserModel _user;
         private readonly IAPIHelper _apiHelper;
         [ObservableProperty]
-        private object _selectedViewModel;
+        private object? _selectedViewModel;
 
         [ObservableProperty]
         string _title = "Get ready to sell, sell, sell!";
@@ -52,6 +52,11 @@ namespace PRMDesktopUI.ViewModels
             SelectedViewModel = _salesViewModel;
             LogOutCommand.NotifyCanExecuteChanged();
             OnPropertyChanged(nameof(IsLoggedIn));
+        }
+
+        public void Receive(ClosePageMessage message)
+        {
+            SelectedViewModel = null;
         }
 
         [RelayCommand]
