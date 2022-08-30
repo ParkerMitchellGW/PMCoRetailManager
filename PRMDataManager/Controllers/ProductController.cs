@@ -9,7 +9,9 @@ using System.Web.Http;
 
 namespace PRMDataManager.Controllers
 {
-    [Authorize]
+    // Example to add multiple roles
+    // [Authorize(Roles = "Cashier,Admin")]
+    [Authorize(Roles = "Cashier")]
     public class ProductController : ApiController
     {
         // GET api/<controller>
@@ -18,27 +20,6 @@ namespace PRMDataManager.Controllers
             ProductData data = new ProductData();
 
             return data.GetProducts();
-        }
-
-        // GET api/<controller>/5
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<controller>
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<controller>/5
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<controller>/5
-        public void Delete(int id)
-        {
         }
     }
 }

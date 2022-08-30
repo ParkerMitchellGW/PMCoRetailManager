@@ -12,12 +12,19 @@ namespace PRMDataManager.Controllers
     [Authorize]
     public class InventoryController : ApiController
     {
-        public List<InventoryModel> GetSalesReport()
+        // Example of multiples roles being authorized
+        // Anyone with any of these roles can use this function
+        [Authorize(Roles = "Manager,Admin")]
+        public List<InventoryModel> GetInventory()
         {
             InventoryData data = new InventoryData();
             return data.GetInventory();
         }
 
+        // Example of needing multiple roles in order to authorize
+        // Must be ALL of these roles to use this function
+        //[Authorize(Roles = "WarehouseWorker")]
+        [Authorize(Roles = "Admin")]
         public void Post(InventoryModel item)
         {
             InventoryData data = new InventoryData();

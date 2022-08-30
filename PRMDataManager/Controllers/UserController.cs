@@ -12,7 +12,7 @@ namespace PRMDataManager.Controllers
     [Authorize]
     public class UserController : ApiController
     {
-        // GET api/values/5
+        [HttpGet]
         public UserModel GetById()
         {
             string userId = RequestContext.Principal.Identity.GetUserId();
