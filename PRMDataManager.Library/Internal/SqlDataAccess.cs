@@ -48,30 +48,45 @@ namespace PRMDataManager.Library.Internal
 
             _transaction = _connection.BeginTransaction();
 
+            isClosed = false;
+
         }
+        private bool isClosed = false;
 
         // Close connection/stop transaction method
         public void CommitTransaction()
         {
-            if(_transaction != null)
-            {
-                _transaction?.Commit();
-                _transaction?.Dispose();
-                _transaction = null;
-            }
+            _transaction?.Commit();
             _connection?.Close();
+
+            isClosed = true;
         }
 
         public void RollbackTransaction()
         {
             _transaction?.Rollback();
             _connection?.Close();
+
+            isClosed = true;
         }
 
         // Dispose
         public void Dispose()
         {
-            CommitTransaction();
+            if (isClosed == false)
+            {
+                try
+                {
+                    CommitTransaction();
+                }
+                catch
+                {
+                    // TODO - Log this issue
+                }
+            }
+
+            _transaction = null;
+            _connection = null;
         }
 
         // Load using transaction
