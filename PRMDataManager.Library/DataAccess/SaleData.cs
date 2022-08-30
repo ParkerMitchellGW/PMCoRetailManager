@@ -46,33 +46,33 @@ namespace PRMDataManager.Library.DataAccess
             sale.Total = sale.SubTotal + sale.Tax;
 
             // Save the sale model
-            SqlDataAccess sql = new SqlDataAccess();
-
-            sql.SaveData("dbo.spSale_Insert", sale, "PRMData");
-
-            // Get the ID from the sale model
-            sale.Id =
-                sql.LoadData<int, dynamic>("spSale_Lookup", new { sale.CashierId, sale.SaleDate }, "PRMData").FirstOrDefault();
-
-            // Finish filling in the sale detail models
-            details.ForEach(detail =>
+            using SqlDataAccess sql = new SqlDataAccess();
+            try
             {
-                detail.SaleId = sale.Id;
+                sql.StartTransaction("PRMData");
+
+                sql.SaveDataInTransaction("dbo.spSale_Insert", sale, "PRMData");
+
+                // Get the ID from the sale model
+                sale.Id =
+                    sql.LoadDataInTransaction<int, dynamic>("spSale_Lookup", new { sale.CashierId, sale.SaleDate }, "PRMData").FirstOrDefault();
+
+                // Finish filling in the sale detail models
+                details.ForEach(detail =>
+                {
+                    detail.SaleId = sale.Id;
 
                 // Save the sale detail models
-                sql.SaveData("dbo.spSaleDetail_Insert", detail, "PRMData");
-            });
+                    sql.SaveDataInTransaction("dbo.spSaleDetail_Insert", detail, "PRMData");
+                });
 
+                sql.CommitTransaction();
+            }
+            catch
+            {
+                sql.RollbackTransaction();
+                throw;
+            }
         }
-
-
-        //public List<ProductModel> GetProducts()
-        //{
-        //    SqlDataAccess sql = new SqlDataAccess();
-
-        //    var output = sql.LoadData<ProductModel, dynamic>("dbo.spProduct_GetAll", new { }, "PRMData");
-
-        //    return output;
-        //}
     }
 }

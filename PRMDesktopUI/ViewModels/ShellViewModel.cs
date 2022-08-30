@@ -21,7 +21,7 @@ namespace PRMDesktopUI.ViewModels
     {
         private readonly SalesViewModel _salesViewModel;
         private readonly ILoggedInUserModel _user;
-        private readonly APIHelper _apiHelper;
+        private readonly IAPIHelper _apiHelper;
         [ObservableProperty]
         private object _selectedViewModel;
 
@@ -29,7 +29,7 @@ namespace PRMDesktopUI.ViewModels
         string _title = "Get ready to sell, sell, sell!";
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        public ShellViewModel(SalesViewModel salesViewModel, ILoggedInUserModel loggedInUserModel, APIHelper apiHelper)
+        public ShellViewModel(SalesViewModel salesViewModel, ILoggedInUserModel loggedInUserModel, IAPIHelper apiHelper)
         {
             _salesViewModel = salesViewModel;
             _user = loggedInUserModel;
