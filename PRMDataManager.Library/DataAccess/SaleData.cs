@@ -10,6 +10,14 @@ namespace PRMDataManager.Library.DataAccess
 {
     public class SaleData
     {
+        public List<SaleReportModel> GetSaleReport()
+        {
+            SqlDataAccess sql = new SqlDataAccess();
+
+            var output = sql.LoadData<SaleReportModel, dynamic>("dbo.spSale_Report", new { }, "PRMData");
+
+            return output;
+        }
         public void SaveSale(SaleModel saleInfo, string cashierId)
         {
             //TODO: Make this SOLID/Dry/Better
@@ -62,7 +70,7 @@ namespace PRMDataManager.Library.DataAccess
                 {
                     detail.SaleId = sale.Id;
 
-                // Save the sale detail models
+                    // Save the sale detail models
                     sql.SaveDataInTransaction("dbo.spSaleDetail_Insert", detail, "PRMData");
                 });
 
