@@ -26,41 +26,53 @@
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="19*"/>
+            <ColumnDefinition Width="179*"/>
         </Grid.ColumnDefinitions>
         <!-- Header -->
         <TextBlock Text="User Administation" FontSize="48"
                    Grid.Row="0"
                    Grid.Column="0"
-                   Grid.ColumnSpan="3"
+                   Grid.ColumnSpan="4"
                    HorizontalAlignment="Center"
-                   Margin="0 0 0 20"/>
+                   Margin="0,0,0,20"/>
         <!-- Column 0 -->
-        <TextBlock Grid.Row="1" Grid.Column="0"
-            Text="Users" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="1"
+            Text="Users" HorizontalAlignment="Center" Margin="0,0,0,200" Grid.RowSpan="2"/>
         <ListBox x:Name="Users"
                  Grid.Row="2"
                  Grid.Column="0"
                  ItemsSource="{Binding Users}"
-                 MinHeight="200" MinWidth="150" >
-            <!--SelectedItem="{Binding SelectedProduct}"-->
+                 SelectedItem="{Binding SelectedUser}"
+                 MinHeight="200" MinWidth="150" Margin="0,0,0,134" Grid.RowSpan="7" >
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Vertical">
                         <TextBlock Text="{Binding Email}"/>
                         <TextBlock Text="{Binding RoleList}" FontSize="14"/>
-                        <!--<StackPanel Orientation="Horizontal">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Roles: " FontSize="14"/>
-                                <TextBlock Text="{Binding RoleList}" FontSize="14"/>
-                            </StackPanel>
-                        </StackPanel>-->
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        
-        <!-- Column 2 -->
-        
+
+        <!-- Column 1 -->
+        <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="1" Grid.RowSpan="8" 
+                    Margin="20,0,0,134">
+            <TextBlock x:Name="SelectedUserName" Text="{Binding SelectedUser.Email}" Margin="0 0 0 10"/>
+            <TextBlock Text="Current Roles" />
+            <StackPanel Orientation="Horizontal" Margin="0 0 0 10">
+                <ListBox x:Name="SelectedUserRoles" 
+                         ItemsSource="{Binding UserRoles}"
+                         SelectedItem="{Binding RoleToRemove}"/>
+                <Button Content="Remove" Command="{Binding RemoveSelectedRoleCommand}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <ComboBox x:Name="AvailableRoles" 
+                          ItemsSource="{Binding AvailableRoles}" 
+                          SelectedItem="{Binding RoleToAdd}"/>
+                <Button Content="Add Role" Command="{Binding AddSelectedRoleCommand}"/>
+            </StackPanel>
+        </StackPanel>
+
     </Grid>
 </UserControl>
