@@ -24,11 +24,12 @@ namespace PRMDataManager.Controllers
             return data.GetUserById(userId).First();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
-        [AllowAnonymous]
-        [Route("Admin/GetAllUsers")]
-        public void GetAllUsers()
+        [Route("api/User/Admin/GetAllUsers")]
+        public List<ApplicationUserModel> GetAllUsers()
         {
+            List<ApplicationUserModel> output = new List<ApplicationUserModel>();
             using (var context = new ApplicationDbContext())
             {
                 var userStore = new UserStore<ApplicationUser>(context);
@@ -45,8 +46,16 @@ namespace PRMDataManager.Controllers
                         Id = user.Id,
                         Email = user.Email
                     };
+
+                    foreach (var r in user.Roles)
+                    {
+                        u.Roles.Add(r.RoleId, roles.Where(x => x.Id == r.RoleId).First().Name);
+                    }
+
+                    output.Add(u);
                 }
             }
+            return output;
         }
 
     }

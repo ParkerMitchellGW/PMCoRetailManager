@@ -75,5 +75,11 @@ namespace PRMDesktopUI.ViewModels
             LogOutCommand.NotifyCanExecuteChanged();
             OnPropertyChanged(nameof(IsLoggedIn));
         }
+
+        [RelayCommand]
+        private void UserManagement()
+        {
+            SelectedViewModel = App.GetRequiredService<UserDisplayViewModel>();
+        }
     }
 }

@@ -35,6 +35,7 @@ namespace PRMDesktopUI
 
                     services.AddTransient<IProductEndpoint, ProductEndpoint>();
                     services.AddTransient<ISaleEndpoint, SaleEndpoint>();
+                    services.AddTransient<IUserEndpoint, UserEndpoint>();
 
                     RegisterAllViewModels(services);
                     ConfigureAutoMapper(services);
