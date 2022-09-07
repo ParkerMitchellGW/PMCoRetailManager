@@ -19,7 +19,6 @@ namespace PRMDesktopUI.ViewModels
     [ObservableRecipient]
     public partial class ShellViewModel : IRecipient<LogOnMessage>, IRecipient<ClosePageMessage>
     {
-        private readonly SalesViewModel _salesViewModel;
         private readonly ILoggedInUserModel _user;
         private readonly IAPIHelper _apiHelper;
         [ObservableProperty]
@@ -28,10 +27,8 @@ namespace PRMDesktopUI.ViewModels
         [ObservableProperty]
         string _title = "Get ready to sell, sell, sell!";
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        public ShellViewModel(SalesViewModel salesViewModel, ILoggedInUserModel loggedInUserModel, IAPIHelper apiHelper)
+        public ShellViewModel(ILoggedInUserModel loggedInUserModel, IAPIHelper apiHelper)
         {
-            _salesViewModel = salesViewModel;
             _user = loggedInUserModel;
             _apiHelper = apiHelper;
 
@@ -49,7 +46,7 @@ namespace PRMDesktopUI.ViewModels
 
         public void Receive(LogOnMessage message)
         {
-            SelectedViewModel = _salesViewModel;
+            SelectedViewModel = App.GetRequiredService<SalesViewModel>();
             LogOutCommand.NotifyCanExecuteChanged();
             OnPropertyChanged(nameof(IsLoggedIn));
         }
