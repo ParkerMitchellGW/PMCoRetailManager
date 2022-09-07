@@ -17,7 +17,8 @@ namespace PRMApi.Controllers
         {
             _config = config;
         }
-        // GET api/<controller>
+
+        [HttpGet]
         public List<ProductModel> Get()
         {
             ProductData data = new ProductData(_config);

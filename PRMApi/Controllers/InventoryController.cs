@@ -19,6 +19,7 @@ namespace PRMApi.Controllers
         // Example of multiples roles being authorized
         // Anyone with any of these roles can use this function
         [Authorize(Roles = "Manager,Admin")]
+        [HttpGet]
         public List<InventoryModel> GetInventory()
         {
             InventoryData data = new InventoryData(_config);
@@ -29,6 +30,7 @@ namespace PRMApi.Controllers
         // Must be ALL of these roles to use this function
         //[Authorize(Roles = "WarehouseWorker")]
         [Authorize(Roles = "Admin")]
+        [HttpPost]
         public void Post(InventoryModel item)
         {
             InventoryData data = new InventoryData(_config);
