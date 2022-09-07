@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -12,9 +13,16 @@ namespace PRMDataManager.Library.Internal
 {
     internal class SqlDataAccess : IDisposable
     {
+        public SqlDataAccess(IConfiguration config)
+        {
+            _config = config;
+        }
+
         public string GetConnectionString(string name)
         {
-            return ConfigurationManager.ConnectionStrings[name].ConnectionString;
+            return _config.GetConnectionString(name);
+            //return @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=PRMData;Integrated Security=True;Connect Timeout=60;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+            //return ConfigurationManager.ConnectionStrings[name].ConnectionString;
         }
 
         public List<T> LoadData<T, U>(string storedProcedure, U parameters, string connectionStringName)
@@ -52,6 +60,7 @@ namespace PRMDataManager.Library.Internal
 
         }
         private bool isClosed = false;
+        private readonly IConfiguration _config;
 
         // Close connection/stop transaction method
         public void CommitTransaction()

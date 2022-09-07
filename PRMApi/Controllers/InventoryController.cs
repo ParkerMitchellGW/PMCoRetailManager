@@ -10,12 +10,18 @@ namespace PRMApi.Controllers
     [ApiController]
     public class InventoryController : ControllerBase
     {
+        private readonly IConfiguration _config;
+
+        public InventoryController(IConfiguration config)
+        {
+            _config = config;
+        }
         // Example of multiples roles being authorized
         // Anyone with any of these roles can use this function
         [Authorize(Roles = "Manager,Admin")]
         public List<InventoryModel> GetInventory()
         {
-            InventoryData data = new InventoryData();
+            InventoryData data = new InventoryData(_config);
             return data.GetInventory();
         }
 
@@ -25,7 +31,7 @@ namespace PRMApi.Controllers
         [Authorize(Roles = "Admin")]
         public void Post(InventoryModel item)
         {
-            InventoryData data = new InventoryData();
+            InventoryData data = new InventoryData(_config);
 
             data.SaveInventoryRecord(item);
         }

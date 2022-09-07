@@ -1,4 +1,5 @@
-﻿using PRMDataManager.Library.Internal;
+﻿using Microsoft.Extensions.Configuration;
+using PRMDataManager.Library.Internal;
 using PRMDataManager.Library.Models;
 using System;
 using System.Collections.Generic;
@@ -10,9 +11,15 @@ namespace PRMDataManager.Library.DataAccess
 {
     public class SaleData
     {
+        private readonly IConfiguration _config;
+
+        public SaleData(IConfiguration config)
+        {
+            _config = config;
+        }
         public List<SaleReportModel> GetSaleReport()
         {
-            SqlDataAccess sql = new SqlDataAccess();
+            SqlDataAccess sql = new SqlDataAccess(_config);
 
             var output = sql.LoadData<SaleReportModel, dynamic>("dbo.spSale_Report", new { }, "PRMData");
 
@@ -23,7 +30,7 @@ namespace PRMDataManager.Library.DataAccess
             //TODO: Make this SOLID/Dry/Better
 
             // Start filling in the models we will save to the database
-            ProductData products = new ProductData();
+            ProductData products = new ProductData(_config);
             var taxRate = ConfigHelper.GetTaxRate() / 100;
 
             // Fill in the available information
@@ -54,7 +61,7 @@ namespace PRMDataManager.Library.DataAccess
             sale.Total = sale.SubTotal + sale.Tax;
 
             // Save the sale model
-            using SqlDataAccess sql = new SqlDataAccess();
+            using SqlDataAccess sql = new SqlDataAccess(_config);
             try
             {
                 sql.StartTransaction("PRMData");
