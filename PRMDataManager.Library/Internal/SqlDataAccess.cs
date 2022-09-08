@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -13,9 +14,10 @@ namespace PRMDataManager.Library.Internal
 {
     public class SqlDataAccess : IDisposable, ISqlDataAccess
     {
-        public SqlDataAccess(IConfiguration config)
+        public SqlDataAccess(IConfiguration config, ILogger<SqlDataAccess> logger)
         {
             _config = config;
+            _logger = logger;
         }
 
         public string GetConnectionString(string name)
@@ -61,6 +63,7 @@ namespace PRMDataManager.Library.Internal
         }
         private bool _isClosed = false;
         private readonly IConfiguration _config;
+        private readonly ILogger<SqlDataAccess> _logger;
 
         // Close connection/stop transaction method
         public void CommitTransaction()
@@ -88,9 +91,9 @@ namespace PRMDataManager.Library.Internal
                 {
                     CommitTransaction();
                 }
-                catch
+                catch (Exception ex)
                 {
-                    // TODO - Log this issue
+                    _logger.LogError(ex, "Commit transaction failed in the dispose method.");
                 }
             }
 
