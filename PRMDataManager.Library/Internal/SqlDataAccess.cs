@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace PRMDataManager.Library.Internal
 {
-    internal class SqlDataAccess : IDisposable
+    public class SqlDataAccess : IDisposable, ISqlDataAccess
     {
         public SqlDataAccess(IConfiguration config)
         {
@@ -56,10 +56,10 @@ namespace PRMDataManager.Library.Internal
 
             _transaction = _connection.BeginTransaction();
 
-            isClosed = false;
+            _isClosed = false;
 
         }
-        private bool isClosed = false;
+        private bool _isClosed = false;
         private readonly IConfiguration _config;
 
         // Close connection/stop transaction method
@@ -68,7 +68,7 @@ namespace PRMDataManager.Library.Internal
             _transaction?.Commit();
             _connection?.Close();
 
-            isClosed = true;
+            _isClosed = true;
         }
 
         public void RollbackTransaction()
@@ -76,13 +76,13 @@ namespace PRMDataManager.Library.Internal
             _transaction?.Rollback();
             _connection?.Close();
 
-            isClosed = true;
+            _isClosed = true;
         }
 
         // Dispose
         public void Dispose()
         {
-            if (isClosed == false)
+            if (_isClosed == false)
             {
                 try
                 {

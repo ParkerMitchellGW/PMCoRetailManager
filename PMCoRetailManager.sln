@@ -7,9 +7,9 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "PRMData", "TRMData\PRMData.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PRMDesktopUI", "PRMDesktopUI\PRMDesktopUI.csproj", "{0002341E-B275-457E-BC5A-9FF9AE9A6B4E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PRMDataManager.Library", "PRMDataManager.Library\PRMDataManager.Library.csproj", "{C122976F-3832-4F35-A1A5-A12C158595EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PRMDataManager.Library", "PRMDataManager.Library\PRMDataManager.Library.csproj", "{C122976F-3832-4F35-A1A5-A12C158595EF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PRMDesktopUI.Library", "PRMDesktopUI.Library\PRMDesktopUI.Library.csproj", "{81B9ADCC-0B1F-4B31-8E3C-D5E1796538B7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PRMDesktopUI.Library", "PRMDesktopUI.Library\PRMDesktopUI.Library.csproj", "{81B9ADCC-0B1F-4B31-8E3C-D5E1796538B7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{58C3721D-2307-416E-B3B5-C9D01706A921}"
 EndProject
@@ -17,7 +17,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{A050A9CC-FF0
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WPF", "WPF", "{7146EB12-3616-494E-815E-8599354D632D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PRMApi", "PRMApi\PRMApi.csproj", "{60AFE833-BB35-451E-B737-808C2EAE3B53}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PRMApi", "PRMApi\PRMApi.csproj", "{60AFE833-BB35-451E-B737-808C2EAE3B53}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{391CCA9B-B397-4590-BE38-F5A8751DFF8D}"
+	ProjectSection(SolutionItems) = preProject
+		Roadmap.txt = Roadmap.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

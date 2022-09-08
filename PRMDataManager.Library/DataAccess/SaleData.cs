@@ -9,19 +9,19 @@ using System.Threading.Tasks;
 
 namespace PRMDataManager.Library.DataAccess
 {
-    public class SaleData
+    public class SaleData : ISaleData
     {
-        private readonly IConfiguration _config;
+        private readonly ISqlDataAccess _sql;
+        private readonly IProductData _productData;
 
-        public SaleData(IConfiguration config)
+        public SaleData(ISqlDataAccess sql, IProductData productData)
         {
-            _config = config;
+            _sql = sql;
+            _productData = productData;
         }
         public List<SaleReportModel> GetSaleReport()
         {
-            SqlDataAccess sql = new SqlDataAccess(_config);
-
-            var output = sql.LoadData<SaleReportModel, dynamic>("dbo.spSale_Report", new { }, "PRMData");
+            var output = _sql.LoadData<SaleReportModel, dynamic>("dbo.spSale_Report", new { }, "PRMData");
 
             return output;
         }
@@ -30,14 +30,13 @@ namespace PRMDataManager.Library.DataAccess
             //TODO: Make this SOLID/Dry/Better
 
             // Start filling in the models we will save to the database
-            ProductData products = new ProductData(_config);
             var taxRate = ConfigHelper.GetTaxRate() / 100;
 
             // Fill in the available information
             List<SaleDetailDBModel> details = saleInfo.SaleDetails
                 .Select(saleDetail =>
                 {
-                    var productInfo = products.GetProductById(saleDetail.ProductId);
+                    var productInfo = _productData.GetProductById(saleDetail.ProductId);
                     if (productInfo == null) throw new Exception($"The product Id of {saleDetail.ProductId} could not be found in the database.");
                     decimal tax = productInfo.IsTaxable ?
                         productInfo.RetailPrice * saleDetail.Quantity * taxRate :
@@ -52,7 +51,7 @@ namespace PRMDataManager.Library.DataAccess
                 }).ToList();
 
             // Create the sale model
-            SaleDBModel sale = new SaleDBModel
+            SaleDBModel sale = new()
             {
                 CashierId = cashierId,
                 SubTotal = details.Sum(x => x.PurchasePrice),
@@ -61,16 +60,15 @@ namespace PRMDataManager.Library.DataAccess
             sale.Total = sale.SubTotal + sale.Tax;
 
             // Save the sale model
-            using SqlDataAccess sql = new SqlDataAccess(_config);
             try
             {
-                sql.StartTransaction("PRMData");
+                _sql.StartTransaction("PRMData");
 
-                sql.SaveDataInTransaction("dbo.spSale_Insert", sale, "PRMData");
+                _sql.SaveDataInTransaction("dbo.spSale_Insert", sale, "PRMData");
 
                 // Get the ID from the sale model
                 sale.Id =
-                    sql.LoadDataInTransaction<int, dynamic>("spSale_Lookup", new { sale.CashierId, sale.SaleDate }, "PRMData").FirstOrDefault();
+                    _sql.LoadDataInTransaction<int, dynamic>("spSale_Lookup", new { sale.CashierId, sale.SaleDate }, "PRMData").FirstOrDefault();
 
                 // Finish filling in the sale detail models
                 details.ForEach(detail =>
@@ -78,14 +76,14 @@ namespace PRMDataManager.Library.DataAccess
                     detail.SaleId = sale.Id;
 
                     // Save the sale detail models
-                    sql.SaveDataInTransaction("dbo.spSaleDetail_Insert", detail, "PRMData");
+                    _sql.SaveDataInTransaction("dbo.spSaleDetail_Insert", detail, "PRMData");
                 });
 
-                sql.CommitTransaction();
+                _sql.CommitTransaction();
             }
             catch
             {
-                sql.RollbackTransaction();
+                _sql.RollbackTransaction();
                 throw;
             }
         }

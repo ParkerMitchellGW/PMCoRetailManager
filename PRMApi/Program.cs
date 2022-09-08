@@ -4,6 +4,8 @@ using PRMApi.Data;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using PRMDataManager.Library.DataAccess;
+using PRMDataManager.Library.Internal;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,6 +46,16 @@ builder.Services.AddSwaggerGen(setup =>
         });
 });
 builder.Services.AddControllersWithViews();
+
+#region Our Services
+
+builder.Services.AddTransient<IInventoryData, InventoryData>();
+builder.Services.AddTransient<ISqlDataAccess, SqlDataAccess>();
+builder.Services.AddTransient<IProductData, ProductData>();
+builder.Services.AddTransient<ISaleData, SaleData>();
+builder.Services.AddTransient<IUserData, UserData>();
+
+#endregion
 
 var app = builder.Build();
 
