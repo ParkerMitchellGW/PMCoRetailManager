@@ -38,6 +38,48 @@ namespace PRMApi.Controllers
             return _userData.GetUserById(userId).First();
         }
 
+        public record UserRegistrationModel(
+            string FirstName, string LastName, string EmailAddress, string Password);
+
+        [HttpPost]
+        [Route("Register")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Register(UserRegistrationModel user)
+        {
+            if (!ModelState.IsValid) return BadRequest();
+
+            var existingUser = await _userManager.FindByEmailAsync(user.EmailAddress);
+
+            if (existingUser != null) return BadRequest();
+
+            IdentityUser newUser = new()
+            {
+                Email = user.EmailAddress,
+                EmailConfirmed = true,
+                UserName = user.EmailAddress,
+            };
+
+            IdentityResult result = await _userManager.CreateAsync(newUser, user.Password);
+
+            if(!result.Succeeded) return BadRequest(result.Errors);
+
+            existingUser = await _userManager.FindByEmailAsync(user.EmailAddress);
+
+            if (existingUser == null) return BadRequest("Could not find user after creation.");
+
+            UserModel u = new UserModel
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                EmailAddress = user.EmailAddress,
+                Id = existingUser.Id,
+            };
+
+            _userData.CreateUser(u);
+
+            return Ok();
+        }
+
         [Authorize(Roles = "Admin")]
         [HttpGet]
         [Route("Admin/GetAllUsers")]
