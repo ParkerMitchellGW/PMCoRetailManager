@@ -27,46 +27,16 @@ namespace PRMDesktopUI
             AppHost = Host.CreateDefaultBuilder()
                 .ConfigureServices((hostContext, services) =>
                 {
-                    services.AddSingleton<ShellView>();
-                    services.AddSingleton<IAPIHelper, APIHelper>();
-                    services.AddSingleton<ILoggedInUserModel, LoggedInUserModel>();
-                    services.AddSingleton<IConfigHelper, ConfigHelper>();
-                    services.AddSingleton<IStatusInfoDisplay, StatusInfoDisplay>();
-
-                    services.AddTransient<IProductEndpoint, ProductEndpoint>();
-                    services.AddTransient<ISaleEndpoint, SaleEndpoint>();
-                    services.AddTransient<IUserEndpoint, UserEndpoint>();
-
-                    RegisterAllViewModels(services);
-                    ConfigureAutoMapper(services);
+                    DependencyInjection.ConfigureDependencyInjection(services);
                 })
                 .Build();
-        }
-
-        private void ConfigureAutoMapper(IServiceCollection services)
-        {
-            var config = new MapperConfiguration(cfg => {
-                cfg.CreateMap<ProductModel, ProductDisplayModel>();
-                cfg.CreateMap<CartItemModel, CartItemDisplayModel>();
-            });
-            var mapper = config.CreateMapper();
-
-            services.AddSingleton(mapper);
-        }
-
-        private void RegisterAllViewModels(IServiceCollection services)
-        {
-            GetType().Assembly.GetTypes()
-                    .Where(type => type.IsClass && type.Name.EndsWith("ViewModel"))
-                    .ToList()
-                    .ForEach(viewModelType => services.AddTransient(viewModelType));
         }
 
         protected override async void OnStartup(StartupEventArgs e)
         {
             await AppHost!.StartAsync();
 
-            var startupForm = AppHost.Services.GetRequiredService<ShellView>();
+            var startupForm = GetRequiredService<ShellView>();
             startupForm.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             startupForm.Show();
 
