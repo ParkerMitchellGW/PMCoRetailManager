@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PRMDesktopUI.Library
 {
-    internal static class SecureStringExtensions
+    public static class SecureStringExtensions
     {
         // convert a secure string into a normal plain text string
         public static string ToPlainString(this System.Security.SecureString secureStr)

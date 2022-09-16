@@ -74,9 +74,17 @@ namespace PRMDesktopUI.ViewModels
         }
 
         [RelayCommand]
+        private void RegisterUser()
+        {
+            SelectedViewModel = App.GetRequiredService<RegisterUserViewModel>();
+        }
+
+        [RelayCommand]
         private void UserManagement()
         {
             SelectedViewModel = App.GetRequiredService<UserDisplayViewModel>();
         }
+
+        //private bool CanAccessUserManagement => _user.R
     }
 }

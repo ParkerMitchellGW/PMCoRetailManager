@@ -20,6 +20,9 @@
             <DataTemplate DataType="{x:Type viewmodels:UserDisplayViewModel}">
                 <views:UserDisplayView/>
             </DataTemplate>
+            <DataTemplate DataType="{x:Type viewmodels:RegisterUserViewModel}">
+                <views:RegisterUserView/>
+            </DataTemplate>
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         </ResourceDictionary>
     </Window.Resources>
@@ -30,6 +33,7 @@
             </MenuItem>
             <MenuItem Header="_User">
                 <MenuItem x:Name="UserManagement" Header="User _Management" Command="{Binding UserManagementCommand}" />
+                <MenuItem x:Name="RegisterUser" Header="_Register User" Command="{Binding RegisterUserCommand}" />
             </MenuItem>
             <MenuItem Header="_Account" Visibility="{Binding IsLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}"> 
                 <MenuItem x:Name="Logout" Header="_Logout" Command="{Binding LogOutCommand}" />

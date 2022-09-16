@@ -61,7 +61,7 @@ namespace PRMApi.Controllers
 
             IdentityResult result = await _userManager.CreateAsync(newUser, user.Password);
 
-            if(!result.Succeeded) return BadRequest(result.Errors);
+            if (!result.Succeeded) return BadRequest(result.Errors);
 
             existingUser = await _userManager.FindByEmailAsync(user.EmailAddress);
 
